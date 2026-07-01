@@ -9,14 +9,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "*" }));
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.options("*", cors());
 app.use(express.json());
 
-// Basic abuse protection on the contact endpoint
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: { error: "Too many requests. Please try again later." },
+  validate: { xForwardedForHeader: false },
 });
 
 app.use("/api/contact", contactLimiter, contactRoutes);
