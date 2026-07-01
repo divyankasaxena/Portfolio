@@ -1,20 +1,20 @@
 import { Resend } from "resend";
 
-let resendClient = null;
-
-function getResendClient() {
-  if (!resendClient) {
-    resendClient = new Resend(process.env.RESEND_API_KEY);
-  }
-  return resendClient;
-}
-
 export async function sendContactEmail({ name, email, message }) {
+  const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_RECEIVER_EMAIL;
 
-  await getResendClient().emails.send({
+  console.log("RESEND_API_KEY set:", !!apiKey);
+  console.log("CONTACT_RECEIVER_EMAIL:", to);
+
+  if (!apiKey) throw new Error("RESEND_API_KEY is not set");
+  if (!to) throw new Error("CONTACT_RECEIVER_EMAIL is not set");
+
+  const resend = new Resend(apiKey);
+
+  const result = await resend.emails.send({
     from: "Portfolio Contact Form <onboarding@resend.dev>",
-    to,
+    to: [to],
     reply_to: email,
     subject: `New portfolio message from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
@@ -28,4 +28,7 @@ export async function sendContactEmail({ name, email, message }) {
       </div>
     `,
   });
+
+  console.log("Resend result:", JSON.stringify(result));
+  return result;
 }
