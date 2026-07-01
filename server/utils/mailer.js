@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 export async function sendContactEmail({ name, email, message }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_RECEIVER_EMAIL;
+  const to ='divyankasaxena688@gmail.com';
 
   console.log("RESEND_API_KEY set:", !!apiKey);
   console.log("CONTACT_RECEIVER_EMAIL:", to);
@@ -28,7 +28,7 @@ export async function sendContactEmail({ name, email, message }) {
       </div>
     `,
   });
-
+  
   console.log("Resend result:", JSON.stringify(result));
   return result;
 }
